@@ -46,6 +46,7 @@ import {
   fetchSyncSettings,
   updateSyncSettings,
 } from "./lib/api";
+import { getDisplayCurrency, setDisplayCurrency } from "@/lib/utils";
 
 const SECTOR_COLORS = [
   "#3b82f6", // blue
@@ -144,6 +145,8 @@ export function App() {
   const [healthLoading, setHealthLoading] = useState<boolean>(true);
   const [connections, setConnections] = useState<ConnectionsResponse | null>(null);
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
+  // Amounts without their own currency are shown in the account currency.
+  setDisplayCurrency(summary?.currency);
   const [liveHoldings, setLiveHoldings] = useState<HoldingItem[]>([]);
   const [liveDividends, setLiveDividends] = useState<ApiDividendItem[]>([]);
   const [liveExpected, setLiveExpected] = useState<ApiDividendItem[]>([]);
@@ -437,7 +440,7 @@ export function App() {
       dividendYield: divYield,
       annualDividend: annDiv,
       sector: h.sector || "Other",
-      currency: h.currency || "EUR",
+      currency: h.currency || getDisplayCurrency(),
     };
   });
 
@@ -742,7 +745,7 @@ export function App() {
               receivedDividends={liveDividends}
               expectedDividends={liveExpected}
               holdings={activeHoldings}
-              currency={summary?.currency || "EUR"}
+              currency={summary?.currency || getDisplayCurrency()}
             />
           )}
 
